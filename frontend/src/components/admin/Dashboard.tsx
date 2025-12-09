@@ -4,10 +4,13 @@ import { api } from '../../utils/api';
 import PricingManagement from './PricingManagement';
 import ServicesManagement from './ServicesManagement';
 import ContentManagement from './ContentManagement';
+import LeadsManagement from './LeadsManagement';
+import Sidebar from './Sidebar';
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState<'pricing' | 'services' | 'content'>('pricing');
+  const [activeTab, setActiveTab] = useState<'pricing' | 'services' | 'content' | 'leads'>('pricing');
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,65 +48,64 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-space-black">
-      {/* Header */}
-      <header className="glass border-b border-neon-blue/20">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-heading font-bold neon-text">
-              Admin Dashboard
-            </h1>
-            <button
-              onClick={handleLogout}
-              className="px-6 py-2 border-2 border-neon-blue text-neon-blue rounded-lg font-semibold hover:bg-neon-blue/10 transition-all"
-            >
-              Logout
-            </button>
+    <div className="min-h-screen bg-space-black flex">
+      {/* Sidebar */}
+      <Sidebar
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+
+      {/* Main Content */}
+      <div className="flex-1 lg:ml-64">
+        {/* Header */}
+        <header className="glass border-b border-neon-blue/20 sticky top-0 z-30">
+          <div className="px-4 md:px-6 py-4">
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden px-3 py-2 text-neon-blue hover:bg-neon-blue/10 rounded-lg transition-all"
+                aria-label="Toggle sidebar"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
+              <div className="flex-1 lg:flex-none text-center lg:text-left">
+                <h1 className="text-xl md:text-2xl font-heading font-bold neon-text">
+                  Admin Dashboard
+                </h1>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="px-4 md:px-6 py-2 border-2 border-neon-blue text-neon-blue rounded-lg font-semibold hover:bg-neon-blue/10 transition-all text-sm md:text-base"
+              >
+                Logout
+              </button>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Tabs */}
-      <div className="container mx-auto px-6 py-6">
-        <div className="flex space-x-4 mb-8 border-b border-neon-blue/20">
-          <button
-            onClick={() => setActiveTab('pricing')}
-            className={`px-6 py-3 font-semibold transition-all ${
-              activeTab === 'pricing'
-                ? 'text-neon-blue border-b-2 border-neon-blue'
-                : 'text-gray-400 hover:text-neon-blue'
-            }`}
-          >
-            Pricing Plans
-          </button>
-          <button
-            onClick={() => setActiveTab('services')}
-            className={`px-6 py-3 font-semibold transition-all ${
-              activeTab === 'services'
-                ? 'text-neon-blue border-b-2 border-neon-blue'
-                : 'text-gray-400 hover:text-neon-blue'
-            }`}
-          >
-            Services
-          </button>
-          <button
-            onClick={() => setActiveTab('content')}
-            className={`px-6 py-3 font-semibold transition-all ${
-              activeTab === 'content'
-                ? 'text-neon-blue border-b-2 border-neon-blue'
-                : 'text-gray-400 hover:text-neon-blue'
-            }`}
-          >
-            Content Sections
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="glass rounded-2xl p-6 md:p-8">
-          {activeTab === 'pricing' && <PricingManagement />}
-          {activeTab === 'services' && <ServicesManagement />}
-          {activeTab === 'content' && <ContentManagement />}
-        </div>
+        {/* Content Area */}
+        <main className="p-4 md:p-6 lg:p-8">
+          <div className="glass rounded-2xl p-6 md:p-8">
+            {activeTab === 'pricing' && <PricingManagement />}
+            {activeTab === 'services' && <ServicesManagement />}
+            {activeTab === 'content' && <ContentManagement />}
+            {activeTab === 'leads' && <LeadsManagement />}
+          </div>
+        </main>
       </div>
     </div>
   );

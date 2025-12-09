@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../utils/api';
+import { useModal } from '../../hooks/useModal';
 
 interface ContentSection {
   _id?: string;
@@ -27,6 +28,7 @@ const ContentManagement = () => {
     subtitle: '',
     description: '',
   });
+  const { showAlert, ModalComponent } = useModal();
 
   useEffect(() => {
     fetchContent();
@@ -37,7 +39,7 @@ const ContentManagement = () => {
       const response = await api.getContent();
       setContent(response.data.content || []);
     } catch (error: any) {
-      alert('Failed to fetch content: ' + error.message);
+      await showAlert('Failed to fetch content: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -64,9 +66,9 @@ const ContentManagement = () => {
       await api.updateContent(formData);
       await fetchContent();
       setEditingSection(null);
-      alert('Content updated successfully!');
+      await showAlert('Content updated successfully!');
     } catch (error: any) {
-      alert('Failed to update content: ' + error.message);
+      await showAlert('Failed to update content: ' + error.message);
     }
   };
 
@@ -75,7 +77,9 @@ const ContentManagement = () => {
   }
 
   return (
-    <div>
+    <>
+      <ModalComponent />
+      <div>
       <h2 className="text-2xl font-heading font-bold text-neon-blue mb-6">Content Sections</h2>
 
       <div className="space-y-6">
@@ -152,6 +156,7 @@ const ContentManagement = () => {
         })}
       </div>
     </div>
+    </>
   );
 };
 

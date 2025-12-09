@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../utils/api';
+import { useModal } from '../../hooks/useModal';
 
 interface PricingPlan {
   _id?: string;
@@ -29,6 +30,7 @@ const PricingManagement = () => {
     order: 0,
   });
   const [featureInput, setFeatureInput] = useState('');
+  const { showAlert, showConfirm, ModalComponent } = useModal();
 
   useEffect(() => {
     fetchPlans();
@@ -39,7 +41,7 @@ const PricingManagement = () => {
       const response = await api.getPricing();
       setPlans(response.data);
     } catch (error: any) {
-      alert('Failed to fetch pricing plans: ' + error.message);
+      await showAlert('Failed to fetch pricing plans: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -55,21 +57,22 @@ const PricingManagement = () => {
       }
       await fetchPlans();
       resetForm();
-      alert('Pricing plan saved successfully!');
+      await showAlert('Pricing plan saved successfully!');
     } catch (error: any) {
-      alert('Failed to save pricing plan: ' + error.message);
+      await showAlert('Failed to save pricing plan: ' + error.message);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this pricing plan?')) return;
+    const confirmed = await showConfirm('Are you sure you want to delete this pricing plan?');
+    if (!confirmed) return;
     
     try {
       await api.deletePricing(id);
       await fetchPlans();
-      alert('Pricing plan deleted successfully!');
+      await showAlert('Pricing plan deleted successfully!');
     } catch (error: any) {
-      alert('Failed to delete pricing plan: ' + error.message);
+      await showAlert('Failed to delete pricing plan: ' + error.message);
     }
   };
 
@@ -117,7 +120,9 @@ const PricingManagement = () => {
   }
 
   return (
-    <div>
+    <>
+      <ModalComponent />
+      <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-heading font-bold text-neon-blue">Pricing Plans</h2>
         <button
@@ -298,6 +303,7 @@ const PricingManagement = () => {
         ))}
       </div>
     </div>
+    </>
   );
 };
 

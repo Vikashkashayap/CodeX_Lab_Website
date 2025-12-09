@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import Lead from '../models/Lead.model.js';
 
 interface ContactFormData {
   name: string;
@@ -29,22 +30,17 @@ export const submitContactForm = async (req: Request, res: Response) => {
       });
     }
 
-    // Here you can add:
-    // - Send email using nodemailer
-    // - Save to database
-    // - Send notification
-    
-    console.log('Contact form submission:', {
+    // Save to database
+    const lead = new Lead({
       name,
       email,
       projectType,
       budgetRange,
       message,
-      timestamp: new Date().toISOString()
+      status: 'new'
     });
 
-    // Simulate async operation (e.g., saving to database)
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await lead.save();
 
     res.status(200).json({
       success: true,
@@ -61,6 +57,88 @@ export const submitContactForm = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: 'Failed to submit contact form. Please try again later.'
+    });
+  }
+};
+
+export const getLeads = async (req: Request, res: Response) => {
+  try {
+    const leads = await Lead.find().sort({ createdAt: -1 });
+    
+    res.status(200).json({
+      success: true,
+      data: leads
+    });
+  } catch (error: any) {
+    console.error('Error fetching leads:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch leads'
+    });
+  }
+};
+
+export const updateLeadStatus = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const validStatuses = ['new', 'contacted', 'qualified', 'converted', 'lost'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status'
+      });
+    }
+
+    const lead = await Lead.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    if (!lead) {
+      return res.status(404).json({
+        success: false,
+        message: 'Lead not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: lead
+    });
+  } catch (error: any) {
+    console.error('Error updating lead status:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update lead status'
+    });
+  }
+};
+
+export const deleteLead = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const lead = await Lead.findByIdAndDelete(id);
+
+    if (!lead) {
+      return res.status(404).json({
+        success: false,
+        message: 'Lead not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Lead deleted successfully'
+    });
+  } catch (error: any) {
+    console.error('Error deleting lead:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete lead'
     });
   }
 };

@@ -23,6 +23,26 @@ export const api = {
     return data;
   },
 
+  // Public request (no auth token)
+  async publicRequest(endpoint: string, options: RequestInit = {}) {
+    const config: RequestInit = {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    };
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Request failed');
+    }
+
+    return data;
+  },
+
   // Pricing
   getPricing: () => api.request('/pricing'),
   createPricing: (data: any) => api.request('/pricing', { method: 'POST', body: JSON.stringify(data) }),
@@ -47,4 +67,18 @@ export const api = {
       body: JSON.stringify({ email, password }) 
     }),
   verifyToken: () => api.request('/admin/verify'),
+
+  // Contact/Leads
+  submitContact: (data: any) => 
+    api.publicRequest('/contact/submit', { 
+      method: 'POST', 
+      body: JSON.stringify(data) 
+    }),
+  getLeads: () => api.request('/contact/leads'),
+  updateLeadStatus: (id: string, status: string) => 
+    api.request(`/contact/leads/${id}/status`, { 
+      method: 'PUT', 
+      body: JSON.stringify({ status }) 
+    }),
+  deleteLead: (id: string) => api.request(`/contact/leads/${id}`, { method: 'DELETE' }),
 };

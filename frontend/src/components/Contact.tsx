@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { api } from '../utils/api'
+import { useModal } from '../hooks/useModal'
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -8,12 +10,29 @@ const Contact = () => {
     budgetRange: '',
     message: '',
   })
+  const [loading, setLoading] = useState(false)
+  const { showAlert, ModalComponent } = useModal()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log('Form submitted:', formData)
-    alert('Thank you for your inquiry! We will get back to you within 24 hours.')
+    setLoading(true)
+    
+    try {
+      const response = await api.submitContact(formData)
+      await showAlert(response.message || 'Thank you for your inquiry! We will get back to you within 24 hours.')
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        projectType: '',
+        budgetRange: '',
+        message: '',
+      })
+    } catch (error: any) {
+      await showAlert(error.message || 'Failed to submit form. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -24,7 +43,9 @@ const Contact = () => {
   }
 
   return (
-    <section id="contact" className="py-20 relative">
+    <>
+      <ModalComponent />
+      <section id="contact" className="py-20 relative">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16 px-4">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold mb-4">
@@ -136,15 +157,17 @@ const Contact = () => {
 
               <button
                 type="submit"
-                className="w-full px-8 py-4 bg-neon-blue text-space-black rounded-xl font-semibold text-lg hover:shadow-neon-blue transition-all duration-300 hover:scale-105"
+                disabled={loading}
+                className="w-full px-8 py-4 bg-neon-blue text-space-black rounded-xl font-semibold text-lg hover:shadow-neon-blue transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Send Request
+                {loading ? 'Sending...' : 'Send Request'}
               </button>
             </form>
           </div>
         </div>
       </div>
     </section>
+    </>
   )
 }
 

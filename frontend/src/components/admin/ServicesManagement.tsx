@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../utils/api';
+import { useModal } from '../../hooks/useModal';
 
 interface Service {
   _id?: string;
@@ -22,6 +23,7 @@ const ServicesManagement = () => {
     image: '',
     order: 0,
   });
+  const { showAlert, showConfirm, ModalComponent } = useModal();
 
   useEffect(() => {
     fetchServices();
@@ -32,7 +34,7 @@ const ServicesManagement = () => {
       const response = await api.getServices();
       setServices(response.data);
     } catch (error: any) {
-      alert('Failed to fetch services: ' + error.message);
+      await showAlert('Failed to fetch services: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -48,21 +50,22 @@ const ServicesManagement = () => {
       }
       await fetchServices();
       resetForm();
-      alert('Service saved successfully!');
+      await showAlert('Service saved successfully!');
     } catch (error: any) {
-      alert('Failed to save service: ' + error.message);
+      await showAlert('Failed to save service: ' + error.message);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this service?')) return;
+    const confirmed = await showConfirm('Are you sure you want to delete this service?');
+    if (!confirmed) return;
     
     try {
       await api.deleteService(id);
       await fetchServices();
-      alert('Service deleted successfully!');
+      await showAlert('Service deleted successfully!');
     } catch (error: any) {
-      alert('Failed to delete service: ' + error.message);
+      await showAlert('Failed to delete service: ' + error.message);
     }
   };
 
@@ -89,7 +92,9 @@ const ServicesManagement = () => {
   }
 
   return (
-    <div>
+    <>
+      <ModalComponent />
+      <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-heading font-bold text-neon-blue">Services</h2>
         <button
@@ -192,6 +197,7 @@ const ServicesManagement = () => {
         ))}
       </div>
     </div>
+    </>
   );
 };
 
