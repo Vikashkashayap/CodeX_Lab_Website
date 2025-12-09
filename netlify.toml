@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Configure secrets scanning to ignore React internal code (false positive)
+# React's __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED is not a real secret
+[build.environment]
+  # Ignore React's internal secret pattern in build output
+  SECRETS_SCAN_OMIT_PATHS = "dist/assets/*.js"
+  # Alternative: You can also set this in Netlify UI under Build & deploy > Environment variables
+

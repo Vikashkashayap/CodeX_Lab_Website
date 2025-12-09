@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import Admin from '../models/Admin.model.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-const JWT_EXPIRE = process.env.JWT_EXPIRE || '7d';
+const JWT_SECRET: string = process.env.JWT_SECRET || 'dev-secret-key-change-in-production';
+const JWT_EXPIRE: string = process.env.JWT_EXPIRE || '7d';
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -37,6 +37,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Generate JWT token
+    // @ts-ignore - jsonwebtoken types issue with expiresIn
     const token = jwt.sign(
       { adminId: admin._id.toString() },
       JWT_SECRET,

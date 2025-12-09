@@ -76,14 +76,19 @@ app.listen(PORT, async () => {
   
   // Create default admin if not exists
   try {
-    const adminExists = await Admin.findOne({ email: 'admin@gmail.com' });
-    if (!adminExists) {
-      const defaultAdmin = new Admin({
-        email: 'admin@gmail.com',
-        password: 'admin@#1234'
-      });
-      await defaultAdmin.save();
-      console.log('✅ Default admin created: admin@gmail.com');
+    const defaultAdminEmail = process.env.DEFAULT_ADMIN_EMAIL || 'admin@gmail.com';
+    const defaultAdminPassword = process.env.DEFAULT_ADMIN_PASSWORD;
+    
+    if (defaultAdminPassword) {
+      const adminExists = await Admin.findOne({ email: defaultAdminEmail });
+      if (!adminExists) {
+        const defaultAdmin = new Admin({
+          email: defaultAdminEmail,
+          password: defaultAdminPassword
+        });
+        await defaultAdmin.save();
+        console.log(`✅ Default admin created: ${defaultAdminEmail}`);
+      }
     }
   } catch (error: any) {
     console.error('Error creating default admin:', error.message);
