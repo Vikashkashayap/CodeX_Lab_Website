@@ -158,9 +158,9 @@ const Contact = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-8 py-4 bg-neon-blue text-space-black rounded-xl font-semibold text-lg hover:shadow-neon-blue transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-6 py-3 bg-neon-blue text-space-black rounded-lg font-semibold text-base hover:shadow-[0_0_20px_rgba(10,227,255,0.6)] transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                {loading ? 'Sending...' : 'Send Request'}
+                {loading ? 'Sending...' : 'Get Started'}
               </button>
             </form>
           </div>

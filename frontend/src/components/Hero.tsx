@@ -3,7 +3,7 @@ const Hero = () => {
   const heroImage = "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+    <section id="hero" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
       {/* Background gradient */}
       <div className="absolute inset-0 gradient-bg"></div>
       
@@ -39,11 +39,33 @@ const Hero = () => {
               </p>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button className="px-8 py-4 bg-neon-blue text-space-black rounded-xl font-semibold text-lg hover:shadow-neon-blue transition-all duration-300 hover:scale-105 animate-glow">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button 
+                onClick={() => {
+                  const contactSection = document.getElementById('contact');
+                  if (contactSection) {
+                    const offset = 100;
+                    const elementPosition = contactSection.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                  }
+                }}
+                className="px-6 py-3 bg-neon-blue text-space-black rounded-lg font-semibold text-base hover:shadow-[0_0_20px_rgba(10,227,255,0.6)] transition-all duration-300 hover:scale-105 active:scale-95"
+              >
                 Start Your Project
               </button>
-              <button className="px-8 py-4 border-2 border-neon-blue text-neon-blue rounded-xl font-semibold text-lg hover:bg-neon-blue/10 transition-all duration-300">
+              <button 
+                onClick={() => {
+                  const servicesSection = document.getElementById('services');
+                  if (servicesSection) {
+                    const offset = 100;
+                    const elementPosition = servicesSection.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                  }
+                }}
+                className="px-6 py-3 border border-neon-blue text-neon-blue rounded-lg font-semibold text-base hover:bg-neon-blue/10 hover:shadow-[0_0_15px_rgba(10,227,255,0.3)] transition-all duration-300 hover:scale-105 active:scale-95"
+              >
                 Explore Services
               </button>
             </div>

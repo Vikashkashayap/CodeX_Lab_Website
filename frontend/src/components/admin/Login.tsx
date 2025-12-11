@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../utils/api';
+import Header from '../Header';
+// import Footer from '../Footer';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -48,7 +50,8 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-space-black flex items-center justify-center px-4">
+    <div className="min-h-screen bg-space-black flex flex-col items-center justify-center px-4">
+      <Header />
       <div className="w-full max-w-md">
         <div className="glass rounded-2xl p-8 md:p-12 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-neon-blue/10 to-electric-purple/10"></div>
@@ -114,6 +117,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      {/* <Footer /> */}
     </div>
   );
 };

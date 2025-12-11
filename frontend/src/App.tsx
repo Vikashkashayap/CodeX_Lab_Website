@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
+import BottomNavigation from './components/BottomNavigation';
 import Hero from './components/Hero';
 import Services from './components/Services';
 import About from './components/About';
@@ -14,7 +15,7 @@ import ProtectedRoute from './components/admin/ProtectedRoute';
 
 function HomePage() {
   return (
-    <div className="min-h-screen bg-space-black">
+    <div className="min-h-screen bg-space-black pb-20 lg:pb-0">
       <Header />
       <Hero />
       <Services />
@@ -24,6 +25,7 @@ function HomePage() {
       <Testimonials />
       <Contact />
       <Footer />
+      <BottomNavigation />
     </div>
   );
 }
